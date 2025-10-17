@@ -50,6 +50,7 @@ USE_OLLAMA = True  # "OPENAI" hoặc "OLLAMA"
 REGISTRY_DICT = {
     # 1) Danh mục nhãn
     "labels": [
+        {"key": "tittle", "name": "tiêu đề"},       #tittle
         {"key": "", "name": "mở bài (LEAD tin tức mục vụ) - Thánh Lễ Tri ân (Mở bài)"},       #thong_bao_muc_vu_gioi_thieu_TA
         {"key": "mo_bai_tom_tat_thanh_le", "name": "mở bài (LEAD tin tức mục vụ) - Thánh Lễ"},        #thong_bao_muc_vu_gioi_thieu_TA
         {"key": "", "name": "mở bài (LEAD tin tức mục vụ) - Thánh Lễ Ban Bí Tích (Mở bài)"},      #thong_bao_muc_vu_gioi_thieu_TA
@@ -68,6 +69,23 @@ REGISTRY_DICT = {
 
     # 2) Các quy tắc biên tập (tái sử dụng nhiều label)
     "edit_prompts": [
+          {
+            "id": "EP_TITTLE", #giọng văn
+            "text": (
+                "Kiểm tra và thêm dấu phẩy để tách rõ các cụm địa danh hoặc danh xưng Giáo hội (Giáo xứ, Giáo hạt, Giáo phận, Dòng tu…)."
+                "Xóa dấu phẩy không cần thiết khi nó tách rời các cụm danh xưng tôn giáo liên kết chặt chẽ, ví dụ: “bổn mạng, Thánh X” → “bổn mạng Thánh X”"
+                "Kết nối cụm từ mô tả lễ và tên vị Thánh thành một đơn vị nghĩa duy nhất."
+                "Kiểm tra cấu trúc:\nDạng chuẩn: [Sự kiện hoặc lễ] – [Dịp hoặc chủ đề bổn mạng/kỷ niệm] (, [Địa điểm/đơn vị hành lễ]).\nNếu thiếu hoặc thừa dấu câu, điều chỉnh cho hợp lý (dấu gạch ngang “–”, dấu phẩy)."
+                "Nếu tiêu đề đã đúng cấu trúc, giữ nguyên."
+                "Không thêm, bớt hoặc thay đổi nội dung sự kiện."
+                "Liệt kê nhiều hoạt động bằng dấu phẩy hoặc “và”, không dùng ký hiệu “&”."
+                "Giữ nguyên phong cách trang trọng, không thêm cảm xúc"
+                "Loại bỏ phần mở đầu hành chính hoặc kỹ thuật, như: “BẢNG TIN, “THÔNG BÁO”, “TIN MỚI”, “LỊCH MỤC VỤ”, “CẬP NHẬT”, “THÔNG TIN”…"
+                "Duy trì cấu trúc trang trọng, tránh rườm rà hoặc ngắt quãng."
+                "Chuyển tất cả về chữ hoa"
+                "Trả về chỉ một tiêu đề duy nhất, đã chỉnh sửa hoàn chỉnh."
+            )
+        },
         {
             "id": "EP_CHUAN_HOA",
             "text": (
@@ -406,6 +424,10 @@ REGISTRY_DICT = {
     # 3) Ánh xạ N–N: mỗi label_key -> nhiều edit_prompt_ids
     "map": [
         {
+            "label_key": "tittle",
+            "edit_prompt_ids": ["EP_TITTLE"]
+        },
+        {
             "label_key": "mo_bai_tom_tat_thanh_le",
             "edit_prompt_ids": ["EP_LEAD_HOI_DOAN_STRUC", "EP_LEAD_HOI_DOAN_TONE", "EP_LEAD_HOI_DOAN_WORD","P_LEAD_HOI_DOAN_AIM", "EP_CHUAN_HOA"]
         },
@@ -466,6 +488,7 @@ REGISTRY_DICT = {
         # Thứ tự cuối cùng (ổn định): theo bảng ưu tiên toàn cục
         "ordering": "by_global_order",
         "global_prompt_order": [
+            "EP_TITTLE"
             "EP_STYLE_TONE",
             "EP_STYLE_TONE_TLTA",
             "EP_STYLE_TONE_TLKNKD",
